@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>John Doe - Creative Developer</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body data-theme="dark">
+
+    <header>
+        <nav class="container">
+            <a href="#hero" class="logo">JD.</a>
+            <ul class="nav-links">
+                <li><a href="#hero">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="controls">
+                <div class="theme-switch-wrapper">
+                    <label class="theme-switch" for="theme-checkbox">
+                        <input type="checkbox" id="theme-checkbox" />
+                        <div class="slider round"></div>
+                    </label>
+                </div>
+                <div class="menu-toggle">&#9776;</div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero" class="hero">
+            <div class="hero-text">
+                <p>Hello, I'm John Doe.</p>
+                <h1>I <span class="typing"></span></h1>
+                <a href="#projects" class="cta-button">View My Work</a>
+            </div>
+        </section>
+
+        <section id="about" class="about fade-in">
+            <div class="container">
+                <h2 class="section-title">About Me</h2>
+                <div class="about-content">
+                    <div class="about-image">
+                        <img src="images/profile.png" alt="John Doe">
+                    </div>
+                    <div class="about-text">
+                        <h3>Creative Developer from New York</h3>
+                        <p>I create modern and responsive websites with a focus on user experience and performance. I'm passionate about clean code, beautiful design, and bringing ideas to life in the browser.</p>
+                        <div class="skills">
+                            <div class="skill-item">HTML</div>
+                            <div class="skill-item">CSS</div>
+                            <div class="skill-item">JavaScript</div>
+                            <div class="skill-item">React</div>
+                            <div class="skill-item">Figma</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="projects fade-in">
+            <div class="container">
+                <h2 class="section-title">My Projects</h2>
+                <div class="project-filters">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="web">Web Dev</button>
+                    <button class="filter-btn" data-filter="ui">UI/UX</button>
+                </div>
+                <div class="project-grid">
+                    <div class="project-card" data-category="web">
+                        <div class="project-image">
+                            <img src="images/project1.png" alt="Project One">
+                        </div>
+                        <div class="project-info">
+                            <h3>Project One</h3>
+                            <p>A sleek and modern e-commerce platform.</p>
+                            <div class="project-links">
+                                <a href="#" class="cta-button">Live Demo</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project-card" data-category="ui">
+                         <div class="project-image">
+                            <img src="images/project2.png" alt="Project Two">
+                        </div>
+                        <div class="project-info">
+                            <h3>Project Two</h3>
+                            <p>A data visualization dashboard for analytics.</p>
+                            <div class="project-links">
+                                <a href="#" class="cta-button">Live Demo</a>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="project-card" data-category="web">
+                         <div class="project-image">
+                            <img src="images/project1.png" alt="Project Three">
+                        </div>
+                        <div class="project-info">
+                            <h3>Project Three</h3>
+                            <p>A corporate landing page with animations.</p>
+                            <div class="project-links">
+                                <a href="#" class="cta-button">Live Demo</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="contact fade-in">
+            <div class="container">
+                <h2 class="section-title">Get In Touch</h2>
+                <form id="contact-form" novalidate>
+                    <input type="text" name="name" placeholder="Your Name" required>
+                    <input type="email" name="email" placeholder="Your Email" required>
+                    <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
+                    <button type="submit" class="cta-button">Send Message</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 John Doe. All Rights Reserved.</p>
+    </footer>
+
+    <a href="#hero" class="back-to-top-btn hidden"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M11 4.707v14.586a1 1 0 0 0 2 0V4.707l4.646 4.647a1 1 0 0 0 1.414-1.414l-6.364-6.364a1 1 0 0 0-1.414 0l-6.364 6.364a1 1 0 0 0 1.414 1.414L11 4.707z"/></svg></a>
+
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+    <script src="script.js"></script>
+</body>
+</html>
