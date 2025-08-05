@@ -3,19 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>John Doe - Creative Developer</title>
+    <title>Cihan Kocakuşak - Android Developer</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body data-theme="dark">
+<body>
+
+    <!-- Loading Animation -->
+    <div class="loading-screen">
+        <div class="loader"></div>
+        <p>Loading...</p>
+    </div>
 
     <header>
         <nav class="container">
-            <a href="#hero" class="logo">JD.</a>
+            <a href="#hero" class="logo">CK.</a>
             <ul class="nav-links">
                 <li><a href="#hero">Home</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#projects">Projects</a></li>
+                <li><a href="#blog">Blog</a></li>
+                <li><a href="#testimonials">Testimonials</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
             <div class="controls">
@@ -32,10 +41,23 @@
 
     <main>
         <section id="hero" class="hero">
+            <div class="hero-background"></div>
             <div class="hero-text">
-                <p>Hello, I'm John Doe.</p>
+                <p>Hello, I'm Cihan Kocakuşak.</p>
                 <h1>I <span class="typing"></span></h1>
-                <a href="#projects" class="cta-button">View My Work</a>
+                <p class="hero-subtitle">Android & Backend Developer</p>
+                <div class="hero-buttons">
+                    <a href="#projects" class="cta-button">View My Work</a>
+                    <a href="#" class="cta-button secondary" id="download-cv">
+                        <i class="fas fa-download"></i> Download CV
+                    </a>
+                </div>
+                <div class="social-links">
+                    <a href="https://github.com/chnkcksk" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="https://play.google.com/store/apps/developer?id=chnkcksk" target="_blank"><i class="fab fa-google-play"></i></a>
+                    <a href="https://linkedin.com/in/cihankocakusak" target="_blank"><i class="fab fa-linkedin"></i></a>
+                    <a href="mailto:cihankocakusak3@gmail.com"><i class="fas fa-envelope"></i></a>
+                </div>
             </div>
         </section>
 
@@ -44,17 +66,61 @@
                 <h2 class="section-title">About Me</h2>
                 <div class="about-content">
                     <div class="about-image">
-                        <img src="images/profile.png" alt="John Doe">
+                        <img src="images/profile.png" alt="Cihan Kocakuşak">
                     </div>
                     <div class="about-text">
-                        <h3>Creative Developer from New York</h3>
-                        <p>I create modern and responsive websites with a focus on user experience and performance. I'm passionate about clean code, beautiful design, and bringing ideas to life in the browser.</p>
+                        <h3>Android Developer from Ankara, Turkey</h3>
+                        <p>I am an Android Developer with backend skills. I work with Android Studio and use modern patterns like MVVM. I also use tools like Room database, Firebase (Auth, Firestore, Storage), Navigation Component, and Retrofit to build user-friendly apps. Besides mobile development, I have foundational knowledge of backend development using Java and Spring Boot.</p>
+                        
+                        <div class="skills-section">
+                            <h4>My Skills</h4>
+                            <div class="skill-bars">
+                                <div class="skill-bar">
+                                    <div class="skill-info">
+                                        <span>Android Development</span>
+                                        <span>95%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress" data-width="95"></div>
+                                    </div>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-info">
+                                        <span>Kotlin</span>
+                                        <span>90%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress" data-width="90"></div>
+                                    </div>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-info">
+                                        <span>Firebase</span>
+                                        <span>85%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress" data-width="85"></div>
+                                    </div>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-info">
+                                        <span>Java & Spring Boot</span>
+                                        <span>80%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress" data-width="80"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="skills">
-                            <div class="skill-item">HTML</div>
-                            <div class="skill-item">CSS</div>
-                            <div class="skill-item">JavaScript</div>
-                            <div class="skill-item">React</div>
-                            <div class="skill-item">Figma</div>
+                            <span class="skill-item"><i class="fab fa-android"></i> Android</span>
+                            <span class="skill-item"><i class="fab fa-java"></i> Java</span>
+                            <span class="skill-item"><i class="fab fa-kotlin"></i> Kotlin</span>
+                            <span class="skill-item"><i class="fab fa-firebase"></i> Firebase</span>
+                            <span class="skill-item"><i class="fab fa-git"></i> Git</span>
+                            <span class="skill-item"><i class="fas fa-database"></i> Room</span>
                         </div>
                     </div>
                 </div>
@@ -66,43 +132,168 @@
                 <h2 class="section-title">My Projects</h2>
                 <div class="project-filters">
                     <button class="filter-btn active" data-filter="all">All</button>
-                    <button class="filter-btn" data-filter="web">Web Dev</button>
-                    <button class="filter-btn" data-filter="ui">UI/UX</button>
+                    <button class="filter-btn" data-filter="android">Android</button>
+                    <button class="filter-btn" data-filter="productivity">Productivity</button>
+                    <button class="filter-btn" data-filter="game">Game</button>
                 </div>
                 <div class="project-grid">
-                    <div class="project-card" data-category="web">
+                    <div class="project-card" data-category="android">
                         <div class="project-image">
-                            <img src="images/project1.png" alt="Project One">
+                            <img src="images/project1.png" alt="AutoLog">
+                            <div class="project-overlay">
+                                <button class="view-project-btn" data-project="project1">View Details</button>
+                            </div>
                         </div>
                         <div class="project-info">
-                            <h3>Project One</h3>
-                            <p>A sleek and modern e-commerce platform.</p>
+                            <h3>AutoLog</h3>
+                            <p>An Android application that enables vehicle owners to track fuel, maintenance, and other expenses.</p>
+                            <div class="project-tech">
+                                <span>Kotlin</span>
+                                <span>Firebase</span>
+                                <span>WorkManager</span>
+                                <span>iText PDF</span>
+                            </div>
                             <div class="project-links">
-                                <a href="#" class="cta-button">Live Demo</a>
+                                <a href="#" target="_blank">Google Play</a>
+                                <a href="#" target="_blank">Source Code</a>
                             </div>
                         </div>
                     </div>
-                    <div class="project-card" data-category="ui">
-                         <div class="project-image">
-                            <img src="images/project2.png" alt="Project Two">
+                    <div class="project-card" data-category="game">
+                        <div class="project-image">
+                            <img src="images/project2.png" alt="Word Game">
+                            <div class="project-overlay">
+                                <button class="view-project-btn" data-project="project2">View Details</button>
+                            </div>
                         </div>
                         <div class="project-info">
-                            <h3>Project Two</h3>
-                            <p>A data visualization dashboard for analytics.</p>
+                            <h3>Word Game</h3>
+                            <p>A gamified mobile app that facilitates learning English vocabulary in an engaging way.</p>
+                            <div class="project-tech">
+                                <span>Kotlin</span>
+                                <span>Room</span>
+                                <span>Google ML Kit</span>
+                                <span>AdMob</span>
+                            </div>
                             <div class="project-links">
-                                <a href="#" class="cta-button">Live Demo</a>
+                                <a href="#" target="_blank">Google Play</a>
+                                <a href="#" target="_blank">Source Code</a>
                             </div>
                         </div>
                     </div>
-                     <div class="project-card" data-category="web">
-                         <div class="project-image">
-                            <img src="images/project1.png" alt="Project Three">
+                    <div class="project-card" data-category="productivity">
+                        <div class="project-image">
+                            <img src="images/project1.png" alt="To-Minder">
+                            <div class="project-overlay">
+                                <button class="view-project-btn" data-project="project3">View Details</button>
+                            </div>
                         </div>
                         <div class="project-info">
-                            <h3>Project Three</h3>
-                            <p>A corporate landing page with animations.</p>
+                            <h3>To-Minder</h3>
+                            <p>A productivity app that combines tasks, reminders, and team chat in one place.</p>
+                            <div class="project-tech">
+                                <span>Kotlin</span>
+                                <span>MVVM</span>
+                                <span>Firebase</span>
+                                <span>Google Sign-In</span>
+                            </div>
                             <div class="project-links">
-                                <a href="#" class="cta-button">Live Demo</a>
+                                <a href="#" target="_blank">Google Play</a>
+                                <a href="#" target="_blank">Source Code</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="blog" class="blog fade-in">
+            <div class="container">
+                <h2 class="section-title">Latest Blog Posts</h2>
+                <div class="blog-grid">
+                    <article class="blog-card">
+                        <div class="blog-image">
+                            <img src="images/project1.png" alt="Blog Post 1">
+                        </div>
+                        <div class="blog-content">
+                            <div class="blog-meta">
+                                <span class="blog-date">Dec 15, 2024</span>
+                                <span class="blog-category">Android Development</span>
+                            </div>
+                            <h3>Modern Android Development with Kotlin</h3>
+                            <p>Explore the latest Android development techniques using Kotlin and modern architecture patterns...</p>
+                            <a href="#" class="read-more">Read More</a>
+                        </div>
+                    </article>
+                    <article class="blog-card">
+                        <div class="blog-image">
+                            <img src="images/project2.png" alt="Blog Post 2">
+                        </div>
+                        <div class="blog-content">
+                            <div class="blog-meta">
+                                <span class="blog-date">Dec 10, 2024</span>
+                                <span class="blog-category">Firebase</span>
+                            </div>
+                            <h3>Integrating Firebase in Android Apps</h3>
+                            <p>Learn how to integrate Firebase Authentication, Firestore, and Storage in your Android applications...</p>
+                            <a href="#" class="read-more">Read More</a>
+                        </div>
+                    </article>
+                    <article class="blog-card">
+                        <div class="blog-image">
+                            <img src="images/project1.png" alt="Blog Post 3">
+                        </div>
+                        <div class="blog-content">
+                            <div class="blog-meta">
+                                <span class="blog-date">Dec 5, 2024</span>
+                                <span class="blog-category">MVVM</span>
+                            </div>
+                            <h3>MVVM Architecture in Android</h3>
+                            <p>Discover how to implement MVVM pattern in Android apps for better code organization...</p>
+                            <a href="#" class="read-more">Read More</a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="testimonials" class="testimonials fade-in">
+            <div class="container">
+                <h2 class="section-title">What Colleagues Say</h2>
+                <div class="testimonials-grid">
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"Cihan is a dedicated Android developer with strong problem-solving skills. His attention to detail and modern development practices are outstanding."</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <img src="images/profile.png" alt="Colleague 1">
+                            <div class="author-info">
+                                <h4>Ahmet Yılmaz</h4>
+                                <span>Senior Android Developer, Cypoint</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"Working with Cihan was a great experience. He quickly adapts to new technologies and delivers high-quality mobile applications."</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <img src="images/profile.png" alt="Colleague 2">
+                            <div class="author-info">
+                                <h4>Mehmet Kaya</h4>
+                                <span>Team Lead, Boğaziçi Savunma</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"Cihan's technical skills and creative approach helped us create user-friendly Android applications that users love."</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <img src="images/profile.png" alt="Colleague 3">
+                            <div class="author-info">
+                                <h4>Zeynep Demir</h4>
+                                <span>Product Manager, Mobile Apps</span>
                             </div>
                         </div>
                     </div>
@@ -113,21 +304,135 @@
         <section id="contact" class="contact fade-in">
             <div class="container">
                 <h2 class="section-title">Get In Touch</h2>
-                <form id="contact-form" novalidate>
-                    <input type="text" name="name" placeholder="Your Name" required>
-                    <input type="email" name="email" placeholder="Your Email" required>
-                    <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
-                    <button type="submit" class="cta-button">Send Message</button>
-                </form>
+                <div class="contact-content">
+                    <div class="contact-info">
+                        <h3>Let's Work Together</h3>
+                        <p>I'm always interested in new opportunities and exciting Android development projects. Feel free to reach out!</p>
+                        <div class="contact-details">
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>cihankocakusak3@gmail.com</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                <span>+90 507 431 68 88</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Ankara, Pursaklar</span>
+                            </div>
+                        </div>
+                    </div>
+                    <form id="contact-form">
+                        <input type="text" name="name" placeholder="Your Name" required>
+                        <input type="email" name="email" placeholder="Your Email" required>
+                        <input type="text" name="subject" placeholder="Subject" required>
+                        <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
+                        <button type="submit" class="cta-button">Send Message</button>
+                    </form>
+                </div>
             </div>
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2025 John Doe. All Rights Reserved.</p>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Cihan Kocakuşak</h3>
+                    <p>Android Developer passionate about building amazing mobile experiences.</p>
+                    <div class="social-links">
+                        <a href="https://github.com/cihankocakusak" target="_blank"><i class="fab fa-github"></i></a>
+                        <a href="https://play.google.com/store/apps/developer?id=cihankocakusak" target="_blank"><i class="fab fa-google-play"></i></a>
+                        <a href="https://linkedin.com/in/cihankocakusak" target="_blank"><i class="fab fa-linkedin"></i></a>
+                        <a href="mailto:cihankocakusak3@gmail.com"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#projects">Projects</a></li>
+                        <li><a href="#blog">Blog</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Services</h4>
+                    <ul>
+                        <li>Android Development</li>
+                        <li>Mobile Apps</li>
+                        <li>Backend Development</li>
+                        <li>UI/UX Design</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Cihan Kocakuşak. All Rights Reserved.</p>
+            </div>
+        </div>
     </footer>
 
-    <a href="#hero" class="back-to-top-btn hidden"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M11 4.707v14.586a1 1 0 0 0 2 0V4.707l4.646 4.647a1 1 0 0 0 1.414-1.414l-6.364-6.364a1 1 0 0 0-1.414 0l-6.364 6.364a1 1 0 0 0 1.414 1.414L11 4.707z"/></svg></a>
+    <!-- Back to top button -->
+    <a href="#hero" class="back-to-top-btn hidden">↑</a>
+
+    <!-- Project Modal -->
+    <div class="project-modal" id="project-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-body">
+                <div class="modal-image">
+                    <img src="" alt="Project Image" id="modal-image">
+                </div>
+                <div class="modal-info">
+                    <h2 id="modal-title"></h2>
+                    <p id="modal-description"></p>
+                    <div class="modal-tech" id="modal-tech"></div>
+                    <div class="modal-links">
+                        <a href="#" target="_blank" id="modal-demo">Google Play</a>
+                        <a href="#" target="_blank" id="modal-code">Source Code</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chatbot -->
+    <div class="chatbot-container">
+        <!-- Chat Bubble -->
+        <div class="chat-bubble" id="chat-bubble">
+            <i class="fas fa-comments"></i>
+        </div>
+        
+        <!-- Chat Window -->
+        <div class="chat-window" id="chat-window">
+            <div class="chat-header">
+                <div class="chat-title">
+                    <i class="fas fa-robot"></i>
+                    <span>AI Assistant</span>
+                </div>
+                <button class="close-chat" id="close-chat">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="chat-messages" id="chat-messages">
+                <div class="message bot-message">
+                    <div class="message-content">
+                        <p>Merhaba! Ben Cihan'ın AI asistanıyım. Size nasıl yardımcı olabilirim? Projeleri, Android geliştirme veya herhangi bir konuda soru sorabilirsiniz. API bağlantısında sorun olursa fallback sistemim devreye girecektir.</p>
+                    </div>
+                    <div class="message-time">Şimdi</div>
+                </div>
+            </div>
+            
+            <div class="chat-input-container">
+                <input type="text" id="chat-input" placeholder="Mesajınızı yazın..." maxlength="500">
+                <button id="send-message">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
     <script src="script.js"></script>
