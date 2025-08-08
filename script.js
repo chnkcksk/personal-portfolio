@@ -559,47 +559,137 @@ English — B1 (Intermediate)`;
     let isChatOpen = false;
     let isTyping = false;
 
-    // Google AI API Configuration
+    // Google AI API Configuration (Gemini 1.5 Flash)
     const GOOGLE_API_KEY = 'AIzaSyCgsE5fOghu6629MNx-jIafC4q2Q1azIws'; // Replace with your actual API key
-    const GOOGLE_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+    const GOOGLE_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent';
     
-    // Alternative proxy URL for CORS issues
-    const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
+    // Alternative proxy URLs for CORS issues
+    const PROXY_URLS = [
+        'https://corsproxy.io/?',
+        'https://api.allorigins.win/raw?url=',
+        'https://cors-anywhere.herokuapp.com/',
+        'https://cors.bridged.cc/',
+        'https://thingproxy.freeboard.io/fetch/',
+        'https://api.codetabs.com/v1/proxy/?quest='
+    ];
     const USE_PROXY = true; // Set to true if you have CORS issues
+    let currentProxyIndex = 0;
+    let lastSuccessfulProxyIndex = null; // Track the last successful proxy
 
     // Test API connection
     async function testAPIConnection() {
         try {
             console.log('Testing API connection...');
-            const apiUrl = USE_PROXY ? `${PROXY_URL}${GOOGLE_API_URL}?key=${GOOGLE_API_KEY}` : `${GOOGLE_API_URL}?key=${GOOGLE_API_KEY}`;
             
-            const testResponse = await fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...(USE_PROXY && { 'Origin': window.location.origin })
-                },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{
-                            text: "Merhaba, bu bir test mesajıdır."
-                        }]
-                    }]
-                })
-            });
-
-            if (testResponse.ok) {
-                console.log('✅ API connection successful!');
-                return true;
-            } else {
-                console.error('❌ API connection failed:', testResponse.status);
-                const errorText = await testResponse.text();
-                console.error('Error details:', errorText);
-                return false;
+            // Try direct connection first
+            if (!USE_PROXY) {
+                const directUrl = `${GOOGLE_API_URL}?key=${GOOGLE_API_KEY}`;
+                const directResponse = await tryFetch(directUrl, false);
+                if (directResponse && directResponse.ok) {
+                    console.log('✅ Direct API connection successful!');
+                    return true;
+                }
             }
+            
+            // Try last successful proxy first if available
+            if (lastSuccessfulProxyIndex !== null) {
+                const proxyUrl = `${PROXY_URLS[lastSuccessfulProxyIndex]}${GOOGLE_API_URL}?key=${GOOGLE_API_KEY}`;
+                console.log(`Trying last successful proxy: ${PROXY_URLS[lastSuccessfulProxyIndex].substring(0, 30)}...`);
+                
+                const proxyResponse = await tryFetch(proxyUrl, true);
+                if (proxyResponse && proxyResponse.ok) {
+                    console.log(`✅ API connection successful with previous proxy!`);
+                    currentProxyIndex = lastSuccessfulProxyIndex;
+                    return true;
+                }
+            }
+            
+            // Try each proxy in sequence
+            for (let i = 0; i < PROXY_URLS.length; i++) {
+                // Skip the proxy we already tried
+                if (i === lastSuccessfulProxyIndex) continue;
+                
+                currentProxyIndex = i;
+                const proxyUrl = `${PROXY_URLS[i]}${GOOGLE_API_URL}?key=${GOOGLE_API_KEY}`;
+                console.log(`Trying proxy ${i+1}/${PROXY_URLS.length}: ${PROXY_URLS[i].substring(0, 30)}...`);
+                
+                const proxyResponse = await tryFetch(proxyUrl, true);
+                if (proxyResponse && proxyResponse.ok) {
+                    console.log(`✅ API connection successful with proxy ${i+1}!`);
+                    lastSuccessfulProxyIndex = i;
+                    return true;
+                }
+            }
+            
+            console.error('❌ All API connection attempts failed');
+            return false;
         } catch (error) {
             console.error('❌ API connection error:', error);
             return false;
+        }
+    }
+    
+    // Helper function to try fetch with timeout
+    async function tryFetch(url, isProxy, timeout = 8000) {
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => {
+                controller.abort();
+                console.warn(`Request to ${url.substring(0, 30)}... timed out after ${timeout}ms`);
+            }, timeout);
+            
+            // Add retry logic
+            let retries = 2;
+            let response = null;
+            
+            while (retries >= 0 && !response) {
+                try {
+                    response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            ...(isProxy && { 
+                                'Origin': window.location.origin,
+                                'X-Requested-With': 'XMLHttpRequest'
+                            })
+                        },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [{
+                                    text: "Merhaba, bu bir test mesajıdır."
+                                }]
+                            }]
+                        }),
+                        signal: controller.signal,
+                        mode: 'cors',
+                        cache: 'no-cache'
+                    });
+                } catch (fetchError) {
+                    if (retries === 0) throw fetchError;
+                    console.warn(`Retry attempt for ${url.substring(0, 30)}... (${retries} left)`);
+                    retries--;
+                    // Short delay before retry
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+            }
+            
+            clearTimeout(timeoutId);
+            
+            if (response && !response.ok) {
+                console.error(`Fetch failed with status: ${response.status}`);
+                try {
+                    const errorText = await response.text();
+                    console.error('Error details:', errorText);
+                } catch (textError) {
+                    console.error('Could not read error response text');
+                }
+            }
+            
+            return response;
+        } catch (error) {
+            console.error(`Fetch error for ${url.substring(0, 30)}...:`, error.message);
+            return null;
         }
     }
 
@@ -759,60 +849,186 @@ English — B1 (Intermediate)`;
 
             console.log('Sending request to Google AI API...');
             
-            const apiUrl = USE_PROXY ? `${PROXY_URL}${GOOGLE_API_URL}?key=${GOOGLE_API_KEY}` : `${GOOGLE_API_URL}?key=${GOOGLE_API_KEY}`;
+            let response = null;
+            let data = null;
             
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    ...(USE_PROXY && { 'Origin': window.location.origin })
-                },
-                body: JSON.stringify(requestBody)
-            });
-
-            console.log('Response status:', response.status);
-            console.log('Response headers:', response.headers);
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error('API Error Response:', errorText);
-                throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+            // Try direct connection if proxy is disabled
+            if (!USE_PROXY) {
+                const directUrl = `${GOOGLE_API_URL}?key=${GOOGLE_API_KEY}`;
+                response = await tryApiRequest(directUrl, requestBody, false);
+                if (response && response.ok) {
+                    try {
+                        data = await response.json();
+                        console.log('✅ Direct API request successful');
+                    } catch (jsonError) {
+                        console.error('Error parsing direct API JSON response:', jsonError);
+                    }
+                }
             }
-
-            const data = await response.json();
-            console.log('API Response:', data);
+            
+            // If direct connection failed or proxy is enabled, try proxies
+            if (!data && USE_PROXY) {
+                // Try last successful proxy first if available
+                if (lastSuccessfulProxyIndex !== null) {
+                    const proxyUrl = `${PROXY_URLS[lastSuccessfulProxyIndex]}${GOOGLE_API_URL}?key=${GOOGLE_API_KEY}`;
+                    console.log(`Trying API request with last successful proxy...`);
+                    
+                    response = await tryApiRequest(proxyUrl, requestBody, true);
+                    if (response && response.ok) {
+                        try {
+                            data = await response.json();
+                            currentProxyIndex = lastSuccessfulProxyIndex;
+                            console.log(`✅ API request successful with previous proxy`);
+                        } catch (jsonError) {
+                            console.error('Error parsing JSON response from previous proxy:', jsonError);
+                            lastSuccessfulProxyIndex = null; // Reset if it fails
+                        }
+                    }
+                }
+                
+                // If still no data, try all proxies
+                if (!data) {
+                    for (let i = 0; i < PROXY_URLS.length; i++) {
+                        // Skip the proxy we already tried
+                        if (i === lastSuccessfulProxyIndex) continue;
+                        
+                        const proxyUrl = `${PROXY_URLS[i]}${GOOGLE_API_URL}?key=${GOOGLE_API_KEY}`;
+                        console.log(`Trying API request with proxy ${i+1}/${PROXY_URLS.length}...`);
+                        
+                        response = await tryApiRequest(proxyUrl, requestBody, true);
+                        if (response && response.ok) {
+                            try {
+                                data = await response.json();
+                                currentProxyIndex = i;
+                                lastSuccessfulProxyIndex = i; // Remember successful proxy
+                                console.log(`✅ API request successful with proxy ${i+1}`);
+                                break;
+                            } catch (jsonError) {
+                                console.error(`Error parsing JSON response from proxy ${i+1}:`, jsonError);
+                            }
+                        }
+                    }
+                }
+            }
             
             // Hide typing indicator
             hideTypingIndicator();
-
-            // Extract the AI response
-            let aiResponse = '';
-            if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
-                aiResponse = data.candidates[0].content.parts[0].text;
-            } else if (data.promptFeedback && data.promptFeedback.blockReason) {
-                aiResponse = 'Üzgünüm, mesajınız güvenlik politikaları nedeniyle engellendi. Lütfen farklı bir soru sorun.';
+            
+            // If we have data, process it
+            if (data) {
+                console.log('API Response:', data);
+                
+                // Extract the AI response
+                let aiResponse = '';
+                if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
+                    aiResponse = data.candidates[0].content.parts[0].text;
+                } else if (data.promptFeedback && data.promptFeedback.blockReason) {
+                    aiResponse = 'Üzgünüm, mesajınız güvenlik politikaları nedeniyle engellendi. Lütfen farklı bir soru sorun.';
+                } else {
+                    aiResponse = 'Üzgünüm, şu anda yanıt veremiyorum. Lütfen daha sonra tekrar deneyin.';
+                }
+                
+                // Add AI response to chat
+                addMessage(aiResponse, 'bot');
             } else {
-                aiResponse = 'Üzgünüm, şu anda yanıt veremiyorum. Lütfen daha sonra tekrar deneyin.';
+                // All API attempts failed
+                throw new Error('All API connection attempts failed');
             }
-
-            // Add AI response to chat
-            addMessage(aiResponse, 'bot');
-
         } catch (error) {
             console.error('Error getting AI response:', error);
             hideTypingIndicator();
             
-            // Show a more user-friendly error message
-            let errorMessage = 'Üzgünüm, API bağlantısında bir sorun var. Size nasıl yardımcı olabilirim? Cihan\'ın Android projeleri, teknolojileri veya hizmetleri hakkında soru sorabilirsiniz.';
+            // Show a more user-friendly error message and suggest alternatives
+            let errorMessage = 'Üzgünüm, şu anda API bağlantısında bir sorun yaşıyorum. Ancak size yine de yardımcı olabilirim. Cihan\'ın Android projeleri, teknolojileri veya hizmetleri hakkında soru sorabilirsiniz.';
             
             // Use fallback responses when API fails
             const fallbackResponse = getFallbackResponse(userMessage);
-            if (fallbackResponse !== errorMessage) {
+            if (fallbackResponse !== getFallbackResponse('default')) {
+                // We found a matching fallback response
                 addMessage(fallbackResponse, 'bot');
+                
+                // After a short delay, suggest some related topics
+                setTimeout(() => {
+                    const suggestions = getSuggestions(userMessage);
+                    if (suggestions) {
+                        addMessage(suggestions, 'bot');
+                    }
+                }, 1000);
             } else {
+                // No specific fallback found, use generic error message
                 addMessage(errorMessage, 'bot');
+                
+                // After a short delay, suggest some popular topics
+                setTimeout(() => {
+                    addMessage('Aşağıdaki konular hakkında bilgi verebilirim:\n- Android geliştirme teknolojileri\n- Cihan\'ın projeleri\n- Mobil uygulama geliştirme hizmetleri\n- İletişim bilgileri', 'bot');
+                }, 1000);
             }
+            
+            // Schedule a retry of the API connection
+            setTimeout(() => {
+                testAPIConnection();
+            }, 30000); // Try again after 30 seconds
+        }
+    }
+    
+    // Helper function to try API request with timeout
+    async function tryApiRequest(url, requestBody, isProxy, timeout = 12000) {
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => {
+                controller.abort();
+                console.warn(`API request to ${url.substring(0, 30)}... timed out after ${timeout}ms`);
+            }, timeout);
+            
+            // Add retry logic
+            let retries = 2;
+            let response = null;
+            
+            while (retries >= 0 && !response) {
+                try {
+                    response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            ...(isProxy && { 
+                                'Origin': window.location.origin,
+                                'X-Requested-With': 'XMLHttpRequest'
+                            })
+                        },
+                        body: JSON.stringify(requestBody),
+                        signal: controller.signal,
+                        mode: 'cors',
+                        cache: 'no-cache'
+                    });
+                } catch (fetchError) {
+                    if (retries === 0) throw fetchError;
+                    console.warn(`Retry attempt for API request to ${url.substring(0, 30)}... (${retries} left)`);
+                    retries--;
+                    // Short delay before retry
+                    await new Promise(resolve => setTimeout(resolve, 800));
+                }
+            }
+            
+            clearTimeout(timeoutId);
+            
+            if (response) {
+                console.log(`Response status for ${url.substring(0, 30)}...: ${response.status}`);
+                
+                if (!response.ok) {
+                    try {
+                        const errorText = await response.text();
+                        console.error(`API Error Response (${response.status}):`, errorText);
+                    } catch (textError) {
+                        console.error(`Could not read error response text for status ${response.status}`);
+                    }
+                }
+            }
+            
+            return response;
+        } catch (error) {
+            console.error(`API request error for ${url.substring(0, 30)}...:`, error.message);
+            return null;
         }
     }
 
@@ -846,7 +1062,8 @@ English — B1 (Intermediate)`;
             'teşekkür': 'Rica ederim! Başka bir sorunuz varsa yardımcı olmaktan mutluluk duyarım.',
             'görüşürüz': 'Görüşmek üzere! İyi günler dilerim.',
             'bye': 'Görüşmek üzere! İyi günler dilerim.',
-            'selam': 'Selam! Size nasıl yardımcı olabilirim?'
+            'selam': 'Selam! Size nasıl yardımcı olabilirim?',
+            'default': 'Üzgünüm, şu anda API bağlantısında bir sorun yaşıyorum. Ancak size yine de yardımcı olabilirim. Cihan\'ın Android projeleri, teknolojileri veya hizmetleri hakkında soru sorabilirsiniz.'
         };
 
         // Check for exact matches first
@@ -870,7 +1087,61 @@ English — B1 (Intermediate)`;
         }
 
         // Default response
-        return 'Üzgünüm, API bağlantısında bir sorun var. Size nasıl yardımcı olabilirim? Cihan\'ın Android projeleri, teknolojileri veya hizmetleri hakkında soru sorabilirsiniz.';
+        return responses.default;
+    }
+    
+    // Get related topic suggestions based on user message
+    function getSuggestions(userMessage) {
+        const message = userMessage.toLowerCase();
+        
+        // Topic categories with related keywords
+        const categories = {
+            'android': ['kotlin', 'java', 'android studio', 'mobile', 'uygulama', 'app', 'geliştirme', 'development'],
+            'projeler': ['proje', 'project', 'autolog', 'word game', 'to-minder', 'portfolio', 'çalışma'],
+            'teknolojiler': ['teknoloji', 'technology', 'firebase', 'room', 'mvvm', 'retrofit', 'jetpack', 'compose'],
+            'iletişim': ['iletişim', 'contact', 'email', 'telefon', 'phone', 'mesaj', 'message'],
+            'hizmetler': ['hizmet', 'service', 'fiyat', 'price', 'ücret', 'teklif', 'offer']
+        };
+        
+        // Find matching categories
+        const matchingCategories = [];
+        for (const [category, keywords] of Object.entries(categories)) {
+            for (const keyword of keywords) {
+                if (message.includes(keyword)) {
+                    matchingCategories.push(category);
+                    break;
+                }
+            }
+        }
+        
+        // Generate suggestions based on matching categories
+        if (matchingCategories.length > 0) {
+            let suggestions = 'Ayrıca şu konular hakkında da bilgi verebilirim:\n';
+            
+            if (matchingCategories.includes('android')) {
+                suggestions += '- Kotlin ve Java deneyimi\n- Android Studio ve geliştirme ortamı\n';
+            }
+            
+            if (matchingCategories.includes('projeler')) {
+                suggestions += '- Cihan\'ın tamamlanmış projeleri\n- Proje geliştirme süreci\n';
+            }
+            
+            if (matchingCategories.includes('teknolojiler')) {
+                suggestions += '- Modern Android teknolojileri\n- Backend ve API entegrasyonu\n';
+            }
+            
+            if (matchingCategories.includes('iletişim')) {
+                suggestions += '- İletişim bilgileri\n- Sosyal medya hesapları\n';
+            }
+            
+            if (matchingCategories.includes('hizmetler')) {
+                suggestions += '- Uygulama geliştirme hizmetleri\n- Fiyatlandırma ve süreç\n';
+            }
+            
+            return suggestions;
+        }
+        
+        return null; // No specific suggestions
     }
 
     // Quick response buttons for common questions
